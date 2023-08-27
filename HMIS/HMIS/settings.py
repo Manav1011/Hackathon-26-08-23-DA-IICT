@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-kem)btvy@zywfv^5j#2xtxxppoe+(fl=$sm5816gbohz_n4fso
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,8 +37,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'user',
-    'case'
+    'case',
+    'rest_framework',
+    'rest_auth',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',    
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'authentication',  # Add the required header here
 ]
 
 MIDDLEWARE = [
@@ -49,7 +63,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Optional: Allow credentials (cookies, HTTP authentication) to be sent with requests.
+CORS_ALLOW_CREDENTIALS = True
+
+# Optional: Configure other CORS settings
+# ...
 
 ROOT_URLCONF = 'HMIS.urls'
 
@@ -101,7 +124,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    # ...
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=60),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=7),
+    'SLIDING_TOKEN_REFRESH_LIFETIME_REMEMBER': timedelta(days=10),
+    'SLIDING_TOKEN_LIFETIME_REMEMBER': timedelta(days=14),
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -113,6 +154,12 @@ USE_I18N = True
 
 USE_TZ = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST="smtp.hostinger.com"
+EMAIL_PORT=587
+EMAIL_HOST_USER='test-dev-ldce@iskconkathwada.org'
+EMAIL_HOST_PASSWORD="Abcd@123"
+EMAIL_USE_TLS=True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
